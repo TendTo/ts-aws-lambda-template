@@ -3,6 +3,10 @@ import { LambdaHandler } from './types/lambda';
 export const handler: LambdaHandler = async (event) => {
     return {
         "statusCode": 200,
-        "body": "Hello world!"
+        "body": JSON.stringify({
+            message: "Hello World!",
+            env: process.env.TOKEN,
+            event: event
+        })
     };
 };

@@ -7,13 +7,13 @@
   "author": "TendTo",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && cp \"package.json\" \"dist/package.json\" && cp \"package-lock.json\" \"dist/package-lock.json\"",
-    "postbuild": "sam build",
     "watch": "tsc -w",
     "test": "jest",
-    "invoke": "sam local invoke",
-    "invoke:env": "sam local invoke --container-env-vars env.json --env-vars env.json",
-    "clean": "rm -r ./.aws-sam"
+    "build": "tsc && cp \"package.json\" \"dist/package.json\" && cp \"package-lock.json\" \"dist/package-lock.json\"",
+    "postbuild": "sam build",
+    "invoke": "sam local invoke --config-file samconfig.toml --config-env dev",
+    "deploy": "sam deploy --template-file template.yaml --config-file samconfig.toml --config-env dev",
+    "clean": "rm -r ./dist && rm -r ./.aws-sam"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.85",

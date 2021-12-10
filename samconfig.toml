@@ -1,0 +1,15 @@
+version = 0.1
+
+[dev.deploy.parameters]
+profile = "default"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+stack_name = "my-function-stack"
+s3_prefix = "my-function-folder"
+s3_bucket = "my-function-bucket-for-lambda"
+region = "eu-west-1"
+# should not include sensitive tokens
+parameter_overrides = "apiStage=\"dev\" token=\"not-important-token-deploy\"" 
+
+[dev.local_invoke.parameters]
+env_vars = "env.json"
