@@ -139,6 +139,7 @@ dist/
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+.vscode/
 
 # Temporary folders
 tmp/
@@ -179,6 +180,7 @@ Temporary Items
 # Docs: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-reference.html
 
 **/.aws-sam
+.aws/
 
 ### Windows ###
 # Windows thumbnail cache files
