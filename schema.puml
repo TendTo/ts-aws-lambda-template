@@ -1,0 +1,23 @@
+@startuml CTMobi counter bot
+!include <awslib/AWSCommon>
+!include <awslib/AWSSimplified>
+
+!include <awslib/General/Users>
+!include <awslib/mobile/APIGateway>
+!include <awslib/Compute/Lambda>
+!include <awslib/SecurityIdentityAndCompliance/IAMRole>
+
+left to right direction
+
+Users(users, "Clients", "")
+package "Deployment on AWS" {
+    APIGateway(api, "Api Gateway", "")
+    Lambda(lambda, "Lambda callback", "")
+    IAMRole(iam, "IAM role", "")
+}
+
+users --> api : interact with the API endpoint
+api --> lambda : if the API call is successful, call the lambda function
+iam --> lambda : IAM role is assigned to the lambda function
+
+@enduml
