@@ -8,6 +8,6 @@ module.exports = {
   clearMocks: true,
   setupFiles: ['./tests/setupTests.ts'],
   moduleNameMapper : {
-    "^/opt/node_modules/(.*)$": "<rootDir>/src/myLayer/$1",
+    "^/opt/nodejs/(.*)$": "<rootDir>/src/myLayer/$1",
   }
 };

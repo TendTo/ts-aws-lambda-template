@@ -15,7 +15,7 @@
         "rootDir": "./src",
         "baseUrl": "./src",
         "paths": {
-            "/opt/node_modules/*": [
+            "/opt/nodejs/*": [
                 "./myLayer/*"
             ]
         }
