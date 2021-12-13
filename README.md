@@ -44,20 +44,11 @@ To use the SAM CLI, you need the following tools.
 - [Node.js 10](https://nodejs.org/en/), including [npm](https://www.npmjs.com/)
 - [Docker](https://hub.docker.com/search/?type=edition&offering=community)
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
-
-- **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-- **AWS Region**: The AWS region you want to deploy your app to.
-- **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-- **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-- **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your
-  application.
-
-You can find your API Gateway Endpoint URL in the output values displayed after deployment.
+You will also need an [AWS](https://aws.amazon.com/) account and a [IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users.html) with the right access policy you can use to connect from the console.
 
 ## SAM configuration
 
-The configuration is specified in the _samconfig.toml_ file. Some of the required settings include:
+The configuration is specified in the _samconfig.toml_ file. You can change it freely, or add some more environments. Some of the settings include:
 
 - **Profile**: name of the aws profile you saved the console credentials for.
 - **Confirm changeset**: whether to ask for manual confirmation after showing the change set sam will produce
@@ -71,21 +62,21 @@ The configuration is specified in the _samconfig.toml_ file. Some of the require
 Here's an example of a _samconfig.toml_:
 
 ```toml
-version = 0.1 							    # needed
+version = 0.1                                 # needed
 
-[dev.deploy.parameters] 					# used by sam deploy --config-env dev
-profile = "default" 						# aws profile
+[dev.deploy.parameters]                       # used by sam deploy --config-env dev
+profile = "default"                           # aws profile
 confirm_changeset = true 
-capabilities = "CAPABILITY_IAM"				 # needed to manage IAM roles
-stack_name = "my-function-stack" 			 # name of the stack that will be deployed
-s3_prefix = "my-function-folder"			 # code folder in the S3 bucket
-s3_bucket = "my-function-bucket-for-lambda"	  # S3 bucket
+capabilities = "CAPABILITY_IAM"               # needed to manage IAM roles
+stack_name = "my-function-stack"              # name of the stack that will be deployed
+s3_prefix = "my-function-folder"              # code folder in the S3 bucket
+s3_bucket = "my-function-bucket-for-lambda"   # S3 bucket
 region = "eu-west-1"
 # should not include sensitive tokens. Overrides the parameters "apiStage" and "token"
 parameter_overrides = "apiStage=\"dev\" token=\"not-important-token-deploy\"" 
 
-[dev.local_invoke.parameters] 				# used by sam local invoke --config-env dev
-env_vars = "env.json"						# file that stores the environment variables
+[dev.local_invoke.parameters]                 # used by sam local invoke --config-env dev
+env_vars = "env.json"                         # file that stores the environment variables
 ```
 
 ## Utility scripts
@@ -93,18 +84,18 @@ env_vars = "env.json"						# file that stores the environment variables
 Some utility scripts have been provided:
 - `npm test`: run jest's tests
 - `npm run watch`: keep watching for changes in the _src_ folder and update the _.js_ files in the _dist_ folder
-- `npm run build`: makes sure the _dist_ folder is updated, adds the _package.json_ and _package-lock.json_ files and finally builds everything with `sam build`
+- `npm run build`: makes sure the _dist_ folder is updated and builds everything with `sam build`
 - `npm run clean`: removes the _dist_ and _.aws-sam_ folders
 - `npm run invoke`: calls `sam local invoke` with the flags 
   - `--config-file samconfig.toml`
   - `--config-env dev`
   - `--template-file template.yaml`
-
-- `npm run deploy`: calls `sam deploy` with the flags 
+- `npm run deploy`: calls `npm run build` and then `sam deploy` with the flags 
   - `--config-file samconfig.toml `
   - `--config-env dev`
-  - `--template-file template.yaml`
 
+The deploy command will refer to the _.aws-sam_ folder, its template and its source code, if present. Otherwise, it will fallback on the _template.yaml_ file in the root folder and the code in the _dist_ folder.  
+The invoke command, on the other hand, will use the default _template.yaml_ file.
 
 ## Use the SAM CLI to build and test locally
 
@@ -158,7 +149,7 @@ ts-aws-lambda$ npm run deploy # you can add -- -g to use the guided procedure
 
 Here's an example of what this template would produce:
 
-![aws-schema](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/TendTo/ts-aws-lambda-template/master/schema.puml)
+![aws-schema](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/TendTo/ts-aws-lambda-template/master/docs/schema.puml)
 
 ## Add a resource to your application
 
