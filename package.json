@@ -15,7 +15,7 @@
     "test": "jest",
     "prebuild": "tsc",
     "build": "sam build",
-    "invoke": "sam local invoke --template-file template.yaml --config-file samconfig.toml --config-env dev",
+    "invoke": "sam local invoke --config-file samconfig.toml --config-env dev",
     "predeploy": "npm run build",
     "deploy": "sam deploy --config-file samconfig.toml --config-env dev",
     "clean": "rm -r ./dist && rm -r ./.aws-sam"
