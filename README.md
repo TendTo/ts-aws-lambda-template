@@ -94,8 +94,34 @@ Some utility scripts have been provided:
   - `--config-file samconfig.toml `
   - `--config-env dev`
 
-The deploy command will refer to the _.aws-sam_ folder, its template and its source code, if present. Otherwise, it will fallback on the _template.yaml_ file in the root folder and the code in the _dist_ folder.  
-The invoke command, on the other hand, will use the default _template.yaml_ file.
+Both the _local invoke_ and the _deploy_ command will refer to the _.aws-sam_ folder, its template and its source code, if present. Otherwise, they will fallback on the _template.yaml_ file in the root folder and the code in the _dist_ folder.
+
+## Examples
+Start compiling the typescript source in watch mode
+```bash
+ts-aws-lambda$ npm run watch
+```
+Start the jest tests. Make sure the _jest.config.js_'s mappings are configured correctly
+```bash
+ts-aws-lambda$ npm run test
+```
+Build all the lamda functions and install their dependencies. It is a good idea to tun this befone any other sam command
+```bash
+ts-aws-lambda$ npm run build
+```
+Invoke the _MyFunction_ function locally in a specialized docker container
+```bash
+ts-aws-lambda$ npm run invoke -- MyFunction
+```
+Invoke the _MyFunction2_ function locally in a specialized docker container, passing as the event parameter of the handle the values of _events/event.json_
+```bash
+ts-aws-lambda$ npm run invoke -- MyFunction2 --e events/event.json
+```
+Deploy all the infrastructure to AWS
+```bash
+ts-aws-lambda$ npm run deploy
+```
+
 
 ## Use the SAM CLI to build and test locally
 
