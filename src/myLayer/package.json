@@ -1,0 +1,11 @@
+{
+    "name": "ts_aws_template_layer",
+    "version": "1.0.0",
+    "dependencies": {
+        "is-odd": "^3.0.1",
+        "common": "file:./utility"
+    },
+    "devDependencies": {
+        "@types/is-odd": "^3.0.0"
+    }
+}

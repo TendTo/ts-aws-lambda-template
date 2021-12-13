@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "resolveJsonModule": true,
         "sourceMap": false,
         "esModuleInterop": true,
         "allowJs": true,
@@ -11,13 +12,22 @@
         ],
         "target": "es2020",
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "baseUrl": "./src",
+        "paths": {
+            "/opt/node_modules/*": [
+                "./myLayer/*"
+            ]
+        }
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.js"
+        "src/**/*.js",
+        "src/**/package.json",
+        "src/**/package-lock.json",
     ],
     "exclude": [
-        "src/temp.ts"
+        "src/**/temp.ts",
+        "src/**/*.test.ts"
     ]
 }
