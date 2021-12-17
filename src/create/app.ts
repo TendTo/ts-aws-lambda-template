@@ -2,6 +2,7 @@ import { Article, LambdaHandler } from './types/lambda';
 import { DynamoDB } from 'aws-sdk';
 
 export const handler: LambdaHandler = async (event) => {
+    console.log(event);
     const db = new DynamoDB({ region: process.env.REGION ?? 'eu-west-1' });
 
     let newArticle: Article;
@@ -26,6 +27,7 @@ export const handler: LambdaHandler = async (event) => {
         },
         ReturnValues: 'ALL_OLD'
     }).promise();
+    console.log(res.Attributes);
 
     return {
         "statusCode": 200,
