@@ -21,6 +21,19 @@ Resources:
     Properties:
       Name: gateway
       StageName: !Ref apiStage
+      Models:
+        Article:
+          type: object
+          required:
+            - id
+            - title
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            tag: 
+              type: string
 
   CreateFunction:
     Type: AWS::Serverless::Function
