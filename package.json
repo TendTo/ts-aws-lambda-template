@@ -6,9 +6,10 @@
   "author": "TendTo",
   "license": "MIT",
   "workspaces": [
-    "./src/myFunction",
-    "./src/myFunction2",
-    "./src/myLayer"
+    "./src/create",
+    "./src/read",
+    "./src/update",
+    "./src/delete"
   ],
   "scripts": {
     "watch": "tsc -w",
