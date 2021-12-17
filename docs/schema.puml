@@ -1,4 +1,4 @@
-@startuml CTMobi counter bot
+@startuml REST-CRUD
 !include <awslib/AWSCommon>
 !include <awslib/AWSSimplified>
 
@@ -6,31 +6,43 @@
 !include <awslib/mobile/APIGateway>
 !include <awslib/mobile/APIGatewayEndpoint>
 !include <awslib/Compute/Lambda>
-!include <awslib/SecurityIdentityAndCompliance/IAMRole>
+!include <awslib/Database/DynamoDB>
 !include <awslib/ManagementGovernance/OpsWorksLayers>
+!include <awslib/Storage/SimpleStorageServiceS3Standard>
 
 left to right direction
 
-Users(users, "Clients", "")
+Users(b_users, "Clients", "")
+Users(f_users, "Clients", "")
 package "Deployment on AWS" {
     APIGateway(api, "MyGateway", "")
-    APIGatewayEndpoint(func, "/func", "")
-    APIGatewayEndpoint(func2, "/func2", "")
-    Lambda(lambda, "MyFunction", "")
-    Lambda(lambda2, "MyFunction2", "")
-    IAMRole(iam, "IAM role of MyFunction", "")
-    IAMRole(iam2, "IAM role of MyFunction2", "")
-    OpsWorksLayers(layer, "MyLayer", "")
+    APIGatewayEndpoint(e_create, "[POST] /article", "")
+    APIGatewayEndpoint(e_read, "[GET] /article/{id}", "")
+    APIGatewayEndpoint(e_update, "[POST] /article/{id}", "")
+    APIGatewayEndpoint(e_delete, "[POST] /article/{id}/delete", "")
+    Lambda(l_create, "Create article", "")
+    Lambda(l_read, "Read article", "")
+    Lambda(l_update, "Update article", "")
+    Lambda(l_delete, "Delete article", "")
+    DynamoDB(db, "Articles table", "")
+    SimpleStorageServiceS3Standard(s3, "Simple form frontend", "")
 }
 
-users --> api : interact with the API endpoint
-api --> func : the endpoint belogns to this gateway
-api --> func2 : the endpoint belogns to this gateway
-func --> lambda : invoke MyFunction
-func2 --> lambda2 : invoke MyFunction2
-lambda <--> layer
-lambda2 <--> layer
-iam -up-> lambda : IAM role is assigned to the lambda function
-iam2 -up-> lambda2 : IAM role is assigned to the lambda function
+b_users --> api : interact directly with the API endpoint
+api --> e_create
+api --> e_read
+api --> e_update
+api --> e_delete
+e_create --> l_create
+e_read --> l_read
+e_update --> l_update
+e_delete --> l_delete
+l_create --> db
+l_read --> db
+l_update --> db
+l_delete --> db
+
+f_users --> s3 : interact with some form of basic frontend, for example a bucked serving a website
+s3 -right-> api
 
 @enduml
