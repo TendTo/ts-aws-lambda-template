@@ -2,7 +2,7 @@ import { Article, LambdaHandler } from './types/lambda';
 import { DynamoDB } from 'aws-sdk';
 
 export const handler: LambdaHandler = async (event) => {
-    console.log(event);
+    console.log(event.body);
     const db = new DynamoDB({ region: process.env.REGION ?? 'eu-west-1' });
 
     let newArticle: Article;

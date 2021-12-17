@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: Simple database with CRUD layout
+Description: Simple database with CRUD functionalities
 
 Parameters:
   region:
@@ -9,13 +9,52 @@ Parameters:
   apiStage:
     Type: String
     Description: stage used to deploy the API
+  tableName:
+    Type: String
+    Description: name of the dynamoDB table
 
 Globals:
   Function:
     Timeout: 3
     Runtime: nodejs14.x
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref tableName
+        REGION: !Ref region
 
 Resources:
+  DynamoDB:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref tableName
+      AttributeDefinitions: 
+        - AttributeName: pk
+          AttributeType: "S"
+        - AttributeName: sk
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_1
+          KeySchema:
+            - AttributeName: sk
+              KeyType: HASH
+            - AttributeName: pk
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
   ApiGateway:
     Type: AWS::Serverless::Api
     Properties:
@@ -29,7 +68,7 @@ Resources:
             - title
           properties:
             id:
-              type: integer
+              type: string
             title:
               type: string
             tag: 
@@ -48,6 +87,10 @@ Resources:
             Path: /post
             Method: post
             RestApiId: !Ref ApiGateway
+            RequestModel:
+              Model: Article
+              Required: true
+              ValidateBody: true
 
   ReadFunction:
     Type: AWS::Serverless::Function
@@ -76,6 +119,10 @@ Resources:
             Path: /post/{id}
             Method: post
             RestApiId: !Ref ApiGateway
+            RequestModel:
+              Model: Article
+              Required: true
+              ValidateBody: true
 
   DeleteFunction:
     Type: AWS::Serverless::Function
