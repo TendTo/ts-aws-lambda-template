@@ -9,7 +9,8 @@
     "./src/create",
     "./src/read",
     "./src/update",
-    "./src/delete"
+    "./src/delete",
+    "./src/dependencies"
   ],
   "scripts": {
     "watch": "tsc -w",
@@ -23,7 +24,6 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.85",
-    "@types/aws-sdk": "^2.7.0",
     "@types/jest": "^27.0.3",
     "jest": "^27.4.3",
     "ts-jest": "^27.1.0",

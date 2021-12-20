@@ -77,9 +77,14 @@ Resources:
   CreateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: create-function
+      FunctionName: crud-create-function
       CodeUri: ./dist/create
       Handler: app.handler
+      Layers:
+        - !Ref Dependencies
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref tableName
       Events:
         ApiGateway:
           Type: Api
@@ -95,9 +100,14 @@ Resources:
   ReadFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: read-function
+      FunctionName: crud-read-function
       CodeUri: ./dist/read
       Handler: app.handler
+      Layers:
+        - !Ref Dependencies
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref tableName
       Events:
         ApiGateway:
           Type: Api
@@ -109,9 +119,14 @@ Resources:
   UpdateFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: update-function
+      FunctionName: crud-update-function
       CodeUri: ./dist/update
       Handler: app.handler
+      Layers:
+        - !Ref Dependencies
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref tableName
       Events:
         ApiGateway:
           Type: Api
@@ -127,9 +142,14 @@ Resources:
   DeleteFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: delete-function
+      FunctionName: crud-delete-function
       CodeUri: ./dist/delete
       Handler: app.handler
+      Layers:
+        - !Ref Dependencies
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref tableName
       Events:
         ApiGateway:
           Type: Api
@@ -137,6 +157,19 @@ Resources:
             Path: /post/{id}/delete
             Method: post
             RestApiId: !Ref ApiGateway
+
+  Dependencies:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: crud-dependencies
+      Description: Dependencies for all the CRUD functions
+      ContentUri: ./dist/dependencies/
+      CompatibleRuntimes:
+        - nodejs14.x
+      LicenseInfo: "MIT"
+      RetentionPolicy: Retain
+    Metadata:
+      BuildMethod: nodejs14.x
 
 Outputs:
   ApiGateway:

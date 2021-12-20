@@ -8,7 +8,8 @@
         "moduleResolution": "node",
         "module": "commonjs",
         "lib": [
-            "es2020"
+            "es2020",
+            "dom"
         ],
         "target": "es2020",
         "outDir": "./dist",
@@ -16,7 +17,7 @@
         "baseUrl": "./src",
         "paths": {
             "/opt/nodejs/*": [
-                "./myLayer/*"
+                "./dependencies/*"
             ]
         }
     },
