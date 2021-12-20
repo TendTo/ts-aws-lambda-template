@@ -1,0 +1,10 @@
+{
+    "name": "create",
+    "version": "1.0.0",
+    "devDependencies": {
+        "@types/uuid": "^8.3.3"
+    },
+    "dependencies": {
+        "uuid": "^8.3.2"
+    }
+}
