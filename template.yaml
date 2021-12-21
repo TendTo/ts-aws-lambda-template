@@ -64,15 +64,16 @@ Resources:
         Article:
           type: object
           required:
-            - id
             - title
           properties:
-            id:
-              type: string
             title:
               type: string
-            tag: 
-              type: string
+          not:
+            required:
+              - pk
+              - sk
+              - created
+              - last_updated
 
   CreateFunction:
     Type: AWS::Serverless::Function
@@ -154,8 +155,8 @@ Resources:
         ApiGateway:
           Type: Api
           Properties:
-            Path: /post/{id}/delete
-            Method: post
+            Path: /post/{id}
+            Method: delete
             RestApiId: !Ref ApiGateway
 
   Dependencies:
