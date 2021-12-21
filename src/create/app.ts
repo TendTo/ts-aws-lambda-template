@@ -1,11 +1,9 @@
 import { Article, LambdaHandler } from './types/lambda';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 } from 'uuid';
+import { Ddb } from '/opt/nodejs/utility';
 
 export const handler: LambdaHandler = async (event) => {
-    console.log(event.body);
-
     // Create an object with the article che user wants to create
     let newArticle: Article;
     try {
@@ -20,24 +18,20 @@ export const handler: LambdaHandler = async (event) => {
             })
         }
     }
+    delete newArticle.pk;
+    delete newArticle.sk;
 
     const articleId = v4();
-    const client = new DynamoDBClient({ region: process.env.REGION ?? 'eu-west-1' });
-    const dbDocument = DynamoDBDocumentClient.from(client, {
-        marshallOptions: { convertClassInstanceToMap: true },
-        unmarshallOptions: { wrapNumbers: true }
-    });
-    const putCommand = new PutCommand({
+    const dbDocument = Ddb.getDBDocumentClient();
+    const putCommand = new UpdateCommand({
         TableName: process.env.TABLE_NAME ?? '',
-        Item: {
-            ...newArticle,
+        Key: {
             pk: articleId,
             sk: "article",
         },
-        ReturnValues: "ALL_OLD"
+        ...Ddb.getPutExpression(newArticle),
     });
-    const res = await dbDocument.send(putCommand);
-    console.log(res.Attributes);
+    await dbDocument.send(putCommand);
 
     // Return the id of the article
     return {

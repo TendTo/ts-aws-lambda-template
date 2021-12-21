@@ -3,9 +3,6 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
 export const handler: LambdaHandler = async (event) => {
-    console.log(event.pathParameters.id);
-    console.log(event.body);
-
     const client = new DynamoDBClient({ region: process.env.REGION ?? 'eu-west-1' });
     const dbDocument = DynamoDBDocumentClient.from(client, {
         marshallOptions: { convertClassInstanceToMap: true },
@@ -19,7 +16,6 @@ export const handler: LambdaHandler = async (event) => {
         }
     });
     const res = await dbDocument.send(getCommand);
-    console.log(res.Item);
 
     return {
         "statusCode": 200,
