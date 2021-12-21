@@ -1,0 +1,34 @@
+@url = https://v9crg7vjyh.execute-api.eu-west-1.amazonaws.com/dev
+@id = edd88fad-f17d-4bc4-a295-31713f07f93f
+
+### 
+POST {{url}}/post
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "Post title 2",
+    "content": "Post content",
+    "tag": "tag1, tag2",
+    "author": ["author1", "author2"]
+}
+### 
+
+GET {{url}}/post/{{id}}
+Accept: application/json
+
+###
+
+POST {{url}}/post/{{id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "Post title",
+    "content": "Post content updated",
+    "tag": "tag1",
+    "author": ["author1", "author3"]
+}
+
+### 
+DELETE {{url}}/post/{{id}}
