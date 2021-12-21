@@ -1,7 +1,7 @@
 {
-  "name": "ts_aws_template",
+  "name": "rest_crud_api",
   "version": "1.0.0",
-  "description": "Typescript aws lambda template",
+  "description": "Simple REST CRUD API",
   "repository": "https://github.com/TendTo/ts-aws-lambda-template",
   "author": "TendTo",
   "license": "MIT",
