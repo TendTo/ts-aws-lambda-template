@@ -1,5 +1,8 @@
 @url = https://v9crg7vjyh.execute-api.eu-west-1.amazonaws.com/dev
-@id = edd88fad-f17d-4bc4-a295-31713f07f93f
+@pk = < pk of the item >
+
+###
+GET {{url}}/post
 
 ### 
 POST {{url}}/post
@@ -14,12 +17,12 @@ Content-Type: application/json
 }
 ### 
 
-GET {{url}}/post/{{id}}
+GET {{url}}/post/{{pk}}
 Accept: application/json
 
 ###
 
-POST {{url}}/post/{{id}}
+POST {{url}}/post/{{pk}}
 Accept: application/json
 Content-Type: application/json
 
@@ -31,4 +34,4 @@ Content-Type: application/json
 }
 
 ### 
-DELETE {{url}}/post/{{id}}
+DELETE {{url}}/post/{{pk}}

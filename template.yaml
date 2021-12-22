@@ -116,6 +116,12 @@ Resources:
             Path: /post/{id}
             Method: get
             RestApiId: !Ref ApiGateway
+        ApiGatewayAll:
+          Type: Api
+          Properties:
+            Path: /post
+            Method: get
+            RestApiId: !Ref ApiGateway
 
   UpdateFunction:
     Type: AWS::Serverless::Function
