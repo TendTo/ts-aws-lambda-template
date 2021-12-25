@@ -6,8 +6,8 @@ module.exports = {
   collectCoverage: false,
   roots: ['./tests'],
   clearMocks: true,
-  setupFiles: ['./tests/setupTests.ts'],
-  moduleNameMapper : {
-    "^/opt/nodejs/(.*)$": "<rootDir>/src/myLayer/$1",
+  setupFilesAfterEnv: ['./tests/setupTests.ts'],
+  moduleNameMapper: {
+    "^/opt/nodejs/(.*)$": "<rootDir>/src/dependencies/$1",
   }
 };

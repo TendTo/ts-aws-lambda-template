@@ -4,5 +4,8 @@
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.44.0",
         "@aws-sdk/lib-dynamodb": "^3.44.0"
+    },
+    "devDependencies": {
+        "aws-sdk-client-mock": "^0.5.6"
     }
 }
