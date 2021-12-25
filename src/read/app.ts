@@ -14,7 +14,7 @@ export const handler: LambdaHandler = async (event) => {
         const getCommand = new GetCommand({
             TableName: process.env.TABLE_NAME ?? '',
             Key: {
-                pk: event.pathParameters?.id,
+                pk: event.pathParameters.id,
                 sk: "article",
             }
         });
