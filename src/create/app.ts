@@ -35,8 +35,8 @@ export const handler: LambdaHandler = async (event) => {
 
     // Return the id of the article
     return {
-        "statusCode": 200,
-        "body": JSON.stringify({
+        statusCode: 200,
+        body: JSON.stringify({
             ok: true,
             pk: articleId,
         })

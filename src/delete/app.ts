@@ -18,8 +18,8 @@ export const handler: LambdaHandler = async (event) => {
     await dbDocument.send(getCommand);
 
     return {
-        "statusCode": 200,
-        "body": JSON.stringify({
+        statusCode: 200,
+        body: JSON.stringify({
             ok: true,
             pk: event.pathParameters.id
         })

@@ -42,8 +42,8 @@ export const handler: LambdaHandler = async (event) => {
     });
     const res = await dbDocument.send(queryCommand);
     return {
-        "statusCode": 200,
-        "body": JSON.stringify({
+        statusCode: 200,
+        body: JSON.stringify({
             ok: true,
             result: res.Items,
         })
