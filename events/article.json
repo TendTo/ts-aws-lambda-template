@@ -1,4 +1,5 @@
 {
     "title": "Titolo",
-    "tag": "tag"
+    "content": "Content",
+    "tags": ["tag"]
 }
