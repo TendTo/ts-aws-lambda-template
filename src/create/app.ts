@@ -1,13 +1,13 @@
-import { Article, LambdaHandler } from './types/lambda';
+import { LambdaHandler } from './types/lambda';
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 } from 'uuid';
 import { Ddb } from '/opt/nodejs/utility';
+import { Content } from '/opt/nodejs/types/ddb';
 
 export const handler: LambdaHandler = async (event) => {
-    // Create an object with the article che user wants to create
-    let newArticle: Article;
+    let content: Content["author"];
     try {
-        newArticle = JSON.parse(event.body);
+        content = JSON.parse(event.body);
     } catch (e) {
         console.error(e);
         return {
@@ -18,18 +18,18 @@ export const handler: LambdaHandler = async (event) => {
             })
         }
     }
-    delete newArticle.pk;
-    delete newArticle.sk;
+    delete content.pk;
+    delete content.sk;
 
-    const articleId = v4();
+    const newId = `${event.pathParameters.type}#${v4()}`;
     const dbDocument = Ddb.getDBDocumentClient();
     const putCommand = new UpdateCommand({
         TableName: process.env.TABLE_NAME ?? '',
         Key: {
-            pk: articleId,
-            sk: "article",
+            pk: newId,
+            sk: event.pathParameters.type,
         },
-        ...Ddb.getPutExpression(newArticle),
+        ...Ddb.getPutExpression(content),
     });
     await dbDocument.send(putCommand);
 
@@ -38,7 +38,7 @@ export const handler: LambdaHandler = async (event) => {
         statusCode: 200,
         body: JSON.stringify({
             ok: true,
-            pk: articleId,
+            pk: newId,
         })
     };
 };

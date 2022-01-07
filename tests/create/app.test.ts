@@ -10,6 +10,9 @@ describe('Create endpoint', function () {
 
     test('successful response', async () => {
         const event = {
+            pathParameters: {
+                type: ""
+            },
             headers: null,
             body: JSON.stringify(article)
         }

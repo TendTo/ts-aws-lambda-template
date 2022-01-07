@@ -90,7 +90,7 @@ Resources:
         ApiGateway:
           Type: Api
           Properties:
-            Path: /post
+            Path: /{type}
             Method: post
             RestApiId: !Ref ApiGateway
             RequestModel:
@@ -113,13 +113,13 @@ Resources:
         ApiGateway:
           Type: Api
           Properties:
-            Path: /post/{id}
+            Path: /{type}/{id}
             Method: get
             RestApiId: !Ref ApiGateway
         ApiGatewayAll:
           Type: Api
           Properties:
-            Path: /post
+            Path: /{type}
             Method: get
             RestApiId: !Ref ApiGateway
 
@@ -138,7 +138,7 @@ Resources:
         ApiGateway:
           Type: Api
           Properties:
-            Path: /post/{id}
+            Path: /{type}/{id}
             Method: post
             RestApiId: !Ref ApiGateway
             RequestModel:
@@ -161,7 +161,7 @@ Resources:
         ApiGateway:
           Type: Api
           Properties:
-            Path: /post/{id}
+            Path: /{type}/{id}
             Method: delete
             RestApiId: !Ref ApiGateway
 

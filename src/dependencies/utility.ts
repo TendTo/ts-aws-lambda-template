@@ -32,14 +32,8 @@ export namespace Ddb {
         });
         const out = arr.reduce((acc, curr) => {
             acc.UpdateExpression += `${acc.UpdateExpression ? ',' : 'SET'} ${curr.UpdateExpression}`;
-            acc.ExpressionAttributeNames = {
-                ...acc.ExpressionAttributeNames,
-                ...curr.ExpressionAttributeNames
-            };
-            acc.ExpressionAttributeValues = {
-                ...acc.ExpressionAttributeValues,
-                ...curr.ExpressionAttributeValues
-            };
+            acc.ExpressionAttributeNames = Object.assign(acc.ExpressionAttributeNames, curr.ExpressionAttributeNames)
+            acc.ExpressionAttributeValues = Object.assign(acc.ExpressionAttributeValues, curr.ExpressionAttributeValues)
             return acc;
         }, {
             UpdateExpression: '',
@@ -50,7 +44,7 @@ export namespace Ddb {
     }
 
     /**
-     * Generates the put expression for a DynamoDB PutItem operation
+     * Generates the put-like expression for a DynamoDB UpdateItem operation
      * @param item item to insert
      * @param checkNotExisting whether to make sure the item does not exist
      * @returns {DdbUpdateExpression} the put expression to use in the put command
