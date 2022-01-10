@@ -63,7 +63,31 @@ export type DdbUpdateExpression = {
         [x: string]: string;
     },
     ExpressionAttributeValues: {
-        [x: string]: any;
+        [x: string]: string | number;
     },
     ConditionExpression?: string,
+}
+
+export type DdbQueryExpression = {
+    IndexName: string,
+    KeyConditionExpression: string,
+    ExpressionAttributeNames: {
+        [x: string]: string;
+    },
+    ExpressionAttributeValues: {
+        [x: string]: string | number;
+    },
+    FilterExpression?: string,
+}
+
+export type DdbOperation = "<>" | "=" | ">=" | "<=" | ">" | "<" | "begins";
+
+/**
+ * The condition expression is supposed to use %# as placeholder for the attribute name and 
+ * %: for the attribute value
+ */
+export type KeyValue = {
+    key: string,
+    value: string | number,
+    conditionExpression?: string,
 }
