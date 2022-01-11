@@ -1,6 +1,7 @@
 import { LambdaHandler } from './types/lambda';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { Author } from '../dependencies/content';
 
 export const handler: LambdaHandler = async (event) => {
     const client = new DynamoDBClient({ region: process.env.REGION ?? 'eu-west-1' });
@@ -16,6 +17,7 @@ export const handler: LambdaHandler = async (event) => {
         }
     });
     await dbDocument.send(getCommand);
+    await Author.delete();
 
     return {
         statusCode: 200,

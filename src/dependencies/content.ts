@@ -1,27 +1,25 @@
 import { DeleteCommand, DeleteCommandOutput, DynamoDBDocumentClient, GetCommand, GetCommandOutput, QueryCommand, UpdateCommand, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb';
+import { v4 } from 'uuid';
 import { Ddb } from './utility';
+import { AuthorFields, Content, ContentType } from './types/ddb';
 
-class ContentBase {
+class ContentBase<T extends Content[keyof Content]> {
     static readonly type: string;
     protected dbDocument: DynamoDBDocumentClient;
 
-    constructor(protected _pk: string, protected _sk: string) {
+    constructor(protected content: Partial<T>) {
         this.dbDocument = Ddb.getDBDocumentClient();
     }
 
     public get pk(): string {
-        return this._pk;
+        return this.content.pk;
     }
 
     public get sk(): string {
-        return this._sk;
+        return this.content.sk;
     }
 
-    public async create(): Promise<this> {
-        throw new Error("Method not implemented.");
-    };
-
-    public async delete(): Promise<void> {
+    public static async delete(): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
@@ -29,94 +27,97 @@ class ContentBase {
         throw new Error("Method not implemented.");
     }
 
-    public async get(): Promise<this> {
-        throw new Error("Method not implemented.");
-    }
-
-    public static getAll() {
-        throw new Error("Method not implemented.");
-    };
-
-    protected async _create(content: Record<string, any>, pk?: string, sk?: string): Promise<UpdateCommandOutput> {
+    protected static async _create<T extends Partial<Content[keyof Content]>>(content: T): Promise<UpdateCommandOutput> {
         const putCommand = new UpdateCommand({
             TableName: process.env.TABLE_NAME ?? '',
             Key: {
-                pk: pk ?? this._pk,
-                sk: sk ?? this._sk,
+                pk: content.pk,
+                sk: content.sk,
             },
             ...Ddb.getPutExpression(content),
         });
-        return await this.dbDocument.send(putCommand);
+        const dbDocument = Ddb.getDBDocumentClient();
+        return await dbDocument.send(putCommand);
     }
 
-    protected async _update(content: Record<string, any>, pk?: string, sk?: string): Promise<UpdateCommandOutput> {
+    protected static async _update<T extends Partial<Content[keyof Content]>>(pk: string, sk: string, content: T): Promise<UpdateCommandOutput> {
         const putCommand = new UpdateCommand({
             TableName: process.env.TABLE_NAME ?? '',
             Key: {
-                pk: pk ?? this._pk,
-                sk: sk ?? this._sk,
+                pk: pk,
+                ...sk && { sk: sk },
             },
             ...Ddb.getUpdateExpression(content),
         });
-        return await this.dbDocument.send(putCommand);
+        const dbDocument = Ddb.getDBDocumentClient();
+        return await dbDocument.send(putCommand);
     }
 
-    protected async _delete(pk?: string, sk?: string): Promise<DeleteCommandOutput> {
+    protected static async _delete(pk: string, sk?: string): Promise<DeleteCommandOutput> {
         const getCommand = new DeleteCommand({
             TableName: process.env.TABLE_NAME ?? '',
             Key: {
-                pk: pk ?? this._pk,
-                sk: sk ?? this._sk,
+                pk: pk,
+                ...sk && { sk: sk },
             }
         });
-        return await this.dbDocument.send(getCommand);
+        const dbDocument = Ddb.getDBDocumentClient();
+        return await dbDocument.send(getCommand);
     }
 
-    protected async _read(pk?: string, sk?: string): Promise<GetCommandOutput> {
+    protected static async _read(pk: string, sk?: string): Promise<GetCommandOutput> {
         const getCommand = new GetCommand({
             TableName: process.env.TABLE_NAME ?? '',
             Key: {
-                pk: pk ?? this._pk,
-                sk: sk ?? this._sk,
+                pk: pk,
+                ...sk && { sk: sk },
             }
         });
-        return await this.dbDocument.send(getCommand);
+        const dbDocument = Ddb.getDBDocumentClient();
+        return await dbDocument.send(getCommand);
     }
 }
 
 
-export class Author extends ContentBase {
+export class Author extends ContentBase<AuthorFields> {
     static readonly type = 'author';
-    private content: Record<string, any>;
 
-    constructor(pk: string, sk: string, public Name: string, public URL: string, public Address: string) {
-        super(pk, sk);
-        this._sk = Author.type;
-        this.content = {
-            Name: this.Name,
-            URL: this.URL,
-            Address: this.Address,
-        };
+    private constructor(content: Partial<AuthorFields>) {
+        super(content);
     }
 
-    public async create(): Promise<this> {
-        const newId = `${Author.type}#${"v4()"}`;
-        this._pk = newId;
-        await this._create(this.content);
-        return this;
+    public get Name(): string {
+        return this.content.Name;
+    }
+
+    public get URL(): string {
+        return this.content.URL;
+    }
+
+    public get Address(): string {
+        return this.content.Address;
+    }
+
+    public static async create(contentFields: Omit<AuthorFields, "pk" | "sk">): Promise<Author> {
+        const newId = `${Author.type}#${v4()}`;
+        const newAuthor = Object.assign(contentFields, { pk: newId, sk: Author.type });
+        await this._create(newAuthor);
+        return new Author(newAuthor);
     }
 
     public async delete(): Promise<void> {
-        await this._delete();
+        await Author._delete(this.pk, this.sk);
     }
     public async update(): Promise<this> {
-        await this._update(this.content);
+        await Author._update(this.pk, this.sk, this.content);
         return this;
     }
-    public async get(): Promise<this> {
-        const res = await this._read();
-        return this;
+
+    public static async get(pk: string): Promise<Author> {
+        const res = await Author._read(pk, Author.type);
+        return new Author(res.Item);
     }
+
     public static async getAll(): Promise<Author[]> {
         const queryCommand = new QueryCommand({
             TableName: process.env.TABLE_NAME ?? '',
@@ -131,14 +132,7 @@ export class Author extends ContentBase {
         });
         const dbDocument = Ddb.getDBDocumentClient();
         const res = await dbDocument.send(queryCommand);
-        if (!res.Items) {
-            return null;
-        }
-        return res.Items.map(
-            ({ pk, sk, Name, URL, Address }) => new Author(pk, sk, Name, URL, Address)
-        );
+        return res.Items.map(item => new Author(item));
     }
-
-
 }
 
