@@ -52,7 +52,7 @@ To use the SAM CLI, you need the following tools.
   (_optional_, for local testing or image deployement)
 - [AWS CLI](https://aws.amazon.com/cli/) (_optional_, for more options)
 
-> `NOTE`: npm needs to be version 7 or higher to support workspaces.\
+> `NOTE:` npm needs to be version 7 or higher to support workspaces.\
 > You can check the current version with `npm -v`.\
 > npm can easily be updated with `npm install -g npm@7` or
 > `npm install -g npm@latest`
@@ -204,7 +204,7 @@ There are 3 main types of resource addition:
      ```
      - Import the modules as `import * from '/opt/nodejs/<file_name>'`
 
-> `NOTE`: you may need to reload your editor for it to notice the new
+> `NOTE:` you may need to reload your editor for it to notice the new
 > dependencies
 
 ## 🛠 Utility scripts
@@ -356,7 +356,7 @@ nifty features to help you quickly find the bug.
 sam logs -n HelloWorldFunction --stack-name ts-aws-lambda --tail
 ```
 
-> `NOTE`: This command works for all AWS Lambda functions; not just the ones you
+> `NOTE:` This command works for all AWS Lambda functions; not just the ones you
 > deploy using SAM.
 
 ## 📚 Resources
