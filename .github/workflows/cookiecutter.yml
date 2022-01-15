@@ -1,0 +1,80 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Cookiecutter updater
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  cookiecutter:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a set of commands using the runners shell
+      - name: Create the template
+        run: |
+          sed -i 's/ts_aws_template/$PACKAGE_NAME/' package.json
+          sed -i 's/Typescript aws lambda template/$PACKAGE_DESCRIPTION/' package.json
+          find . -type f -name 'package-lock.json' -delete
+          rm -rf .github .devcontainer
+          mkdir -p $FOLDER_NAME 
+          mv $(ls -I $FOLDER_NAME) $FOLDER_NAME
+          mv $FOLDER_NAME/LICENCE .
+          echo $COOKIECUTTER_CONFIG > cookiecutter.json
+          echo $README > README.md
+        env:
+          FOLDER_NAME: "{{cookiecutter.folder_name}}"
+          PACKAGE_NAME: "{{cookiecutter.package_name}}"
+          PACKAGE_DESCRIPTION: "{{cookiecutter.project_name}}"
+          COOKIECUTTER_CONFIG: |
+            {
+              "project_name": "Human readable name of the project",
+              "project_slug": "Directory/package name (no whitespaces)"
+            }
+          README: |
+            # Template for Typescript AWS Lambda template
+
+            This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Serverless application using [Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/) on Node.js 14 runtime using TypeScript for Lambda functions source code and shared layers for runtime dependencies.
+
+            Resulted application will be the one you can find in this repository: [ts-aws-lambda-template](https://github.com/TendTo/ts-aws-lambda-template)
+
+            ## Usage
+
+            [Install AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) and run following command:
+
+            ```sh
+            sam init --location gh:TendTo/ts-aws-lambda-template --checkout cookiecutter
+            ```
+
+            You'll be prompted a few questions to help this template to scaffold this project and after its completion you should see a new folder at your current path with the name of the project you gave as input.
+
+            ## Credits
+            Inspired by [cookiecutter-aws-sam-typescript-layers](https://github.com/Envek/cookiecutter-aws-sam-typescript-layers)
+
+
+      - name: Git Commit and Push
+        uses: github-actions-x/commit@v2.8
+        with:
+          # Github Token with commit access
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Override branch to push to
+          push-branch: cookiecutter
+          # Specify commit message
+          commit-message: 'update: cookiecutter'
+          # Force push.
+          force-push: true
