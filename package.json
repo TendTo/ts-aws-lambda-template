@@ -20,7 +20,7 @@
     "predeploy": "npm run build",
     "deploy": "sam deploy --config-file samconfig.toml --config-env dev",
     "delete": "aws cloudformation delete-stack --stack-name ",
-    "clean": "rm -r ./dist && rm -r ./.aws-sam"
+    "clean": "rimraf ./dist ./.aws-sam"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.85",
