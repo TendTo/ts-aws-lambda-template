@@ -37,6 +37,6 @@
 	},
 
 	"mounts": [
-		"source=${localEnv:USERPROFILE}/.aws/credentials,target=/home/vscode/.aws/credentials,type=bind"
+		"source=${localEnv:USERPROFILE}/.aws/credentials,target=/home/node/.aws/credentials,type=bind"
 	]
 }
