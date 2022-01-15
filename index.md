@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/typescript.svg#gh-light-mode-only" alt="Typescript" align=left width=35 height=35><img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/assets/readme/typescript-white.svg#gh-dark-mode-only" alt="Typescript" align=left width=35 height=35> Typescript AWS Lambda template
+# <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/assets/readme/typescript-white.svg#gh-dark-mode-only" alt="Typescript" align=left width=35 height=35 style="padding-right: 20px"> Typescript AWS Lambda template
 
 This project contains source code and supporting files for creating a serverless
 application that you can deploy with the SAM CLI.\
