@@ -2,8 +2,14 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Typescript aws lambda template
 
-# Parameters provided to the function. Can be used to create env vars during deploy
+########################################################################
+# Parameters
+#
+# Parameters provided during the deployement of the template. 
+# Can be used to create env vars
+# Can be referenced at any point with !Ref <par_name> or !Sub "${<par_name>}other words"
 # See the samconfig.toml file
+########################################################################
 Parameters:
   token:
     Type: String
@@ -11,71 +17,107 @@ Parameters:
   apiStage:
     Type: String
     Description: stage used to deploy the API
+    Default: dev
 
+########################################################################
+# Globals
+#
+# Settings in common with all the lambda functions
+# Can be specified individually for each one in the "Properties" section
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+########################################################################
 Globals:
   Function:
-    Timeout: 3
+    # Max timeont before returning an error
+    Timeout: 100
+    # The runtime will be node 14
     Runtime: nodejs14.x
+    # Main file used to start the application
+    # It is in the form <file_name>.<handler_function>
+    Handler: app.handler
+    # Layer shared between the functions
+    Layers:
+      - !Ref MyLayer
+    # Environment variables accessible through "process.env.<name>"
+    Environment:
+      Variables:
+        TOKEN: !Ref token
 
+########################################################################
+# Resources
+#
+# List of AWS resources that will be created and deployed
+########################################################################
 Resources:
+  # Simple API gateway
   MyFunctionApi:
     Type: AWS::Serverless::Api
     Properties:
       Name: my-gateway
       StageName: !Ref apiStage
 
+  # First of the 2 functions
   MyFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       FunctionName: my-function
+      # Folder path that contains the file specified in the "handler" (see globals)
+      # Use "dist" instead of "src", since it needs to point to the compiled ".js" files
       CodeUri: ./dist/myFunction
-      Handler: app.handler
-      Environment:
-        Variables:
-          TOKEN: !Ref token
-      Layers:
-        - !Ref MyLayer
       Events:
         MyFunctionApi:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /func
             Method: get
+            # Reference to the API Gateway resource created before
             RestApiId: !Ref MyFunctionApi
 
+  # Second of the 2 functions
   MyFunction2:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       FunctionName: my-function-2
+      # Folder path that contains the file specified in the "handler" (see globals)
+      # Use "dist" instead of "src", since it needs to point to the compiled ".js" files
       CodeUri: ./dist/MyFunction2
-      Handler: app.handler
-      Environment:
-        Variables:
-          TOKEN: !Ref token
-      Layers:
-        - !Ref MyLayer
       Events:
         MyFunctionApi:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /func2
             Method: get
+            # Reference to the API Gateway resource created before
             RestApiId: !Ref MyFunctionApi
 
+  # Layer containing the dependencies and some utilities shared between functions
   MyLayer:
+    # More info about Layer resources: https://github.com/aws/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesslayerversion
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName: my-function-dependencies
-      Description: Dependencies for my-function
-      ContentUri: ./dist/myLayer/
+      # Folder path that contains the package.json file shared among the other functions
+      # Use "dist" instead of "src", since it needs to point to the compiled ".js" files
+      Description: Dependencies for my-function and my-function-2
+      ContentUri: ./dist/myLayer
       CompatibleRuntimes:
         - nodejs14.x
       LicenseInfo: "MIT"
       RetentionPolicy: Retain
+    # Important to allow sam to build the layer and take advantage of sam's dependecy caching
     Metadata:
       BuildMethod: nodejs14.x
 
+########################################################################
+# Outputs
+#
+# Useful outputs produced by the deployement of the stack
+# Can be fully customized
+########################################################################
 Outputs:
   MyFunctionApi:
     Description: "API Gateway endpoint URL for ${apiStage} stage for MyFunction"
@@ -83,12 +125,3 @@ Outputs:
   MyFunction2Api:
     Description: "API Gateway endpoint URL for ${apiStage} stage for MyFunction"
     Value: !Sub "https://${MyFunctionApi}.execute-api.${AWS::Region}.amazonaws.com/${apiStage}/func2"
-  MyFunction:
-    Description: "MyFunction ARN"
-    Value: !GetAtt MyFunction.Arn
-  MyFunction2:
-    Description: "MyFunction2 ARN"
-    Value: !GetAtt MyFunction2.Arn
-  MyFunctionIamRole:
-    Description: "Implicit IAM Role created for MyFunction"
-    Value: !GetAtt MyFunctionRole.Arn
