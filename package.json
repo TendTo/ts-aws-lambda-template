@@ -6,18 +6,20 @@
   "author": "TendTo",
   "license": "MIT",
   "workspaces": [
-    "./src/myFunction",
-    "./src/myFunction2",
-    "./src/myLayer"
+    "src/*"
   ],
   "scripts": {
+    "newLayer": "npm init -w ",
+    "postnewLayer": "npm i",
     "watch": "tsc -w",
+    "compile": "tsc",
     "test": "jest",
     "prebuild": "tsc",
     "build": "sam build",
     "invoke": "sam local invoke --config-file samconfig.toml --config-env dev",
     "predeploy": "npm run build",
     "deploy": "sam deploy --config-file samconfig.toml --config-env dev",
+    "delete": "aws cloudformation delete-stack --stack-name ",
     "clean": "rm -r ./dist && rm -r ./.aws-sam"
   },
   "devDependencies": {
