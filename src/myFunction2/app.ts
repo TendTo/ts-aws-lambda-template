@@ -10,11 +10,13 @@ import isodd from 'is-odd';
 import { MyClass } from '/opt/nodejs/utility';
 
 export const handler: LambdaHandler = async (event) => {
+    const number = event.val && Number.isInteger(event.val) ? event.val : 0;
     return {
         "statusCode": 200,
         "body": JSON.stringify({
-            message: `The number is ${isodd(event.val) ? "odd" : "even"}!`,
-            class: new MyClass(event.val).isOdd
+            message: `The number ${number} is ${isodd(number) ? "odd" : "even"}!
+            To check for another number, add a "val" field to the event.`,
+            class: new MyClass(number).isOdd
         })
     };
 };
