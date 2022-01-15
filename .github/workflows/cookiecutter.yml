@@ -7,11 +7,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -24,9 +19,17 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'TendTo'
+          git config --global user.email 'TendTo@users.noreply.github.com'
+          git checkout -b "cookiecutter-action"
 
       # Runs a set of commands using the runners shell
-      - name: Create the template
+      - name: Create the cookiecutter template
         run: |
           sed -i 's/ts_aws_template/$PACKAGE_NAME/' package.json
           sed -i 's/Typescript aws lambda template/$PACKAGE_DESCRIPTION/' package.json
@@ -35,20 +38,21 @@ jobs:
           mkdir -p $FOLDER_NAME 
           mv $(ls -I $FOLDER_NAME) $FOLDER_NAME
           mv $FOLDER_NAME/LICENCE .
-          echo $COOKIECUTTER_CONFIG > cookiecutter.json
-          echo $README > README.md
+          echo "$COOKIECUTTER_CONFIG" > cookiecutter.json
+          echo "$README" > README.md
         env:
           FOLDER_NAME: "{{cookiecutter.folder_name}}"
           PACKAGE_NAME: "{{cookiecutter.package_name}}"
-          PACKAGE_DESCRIPTION: "{{cookiecutter.project_name}}"
-          COOKIECUTTER_CONFIG: |
+          PACKAGE_DESCRIPTION: "{{cookiecutter.package_description}}"
+          COOKIECUTTER_CONFIG: |-
             {
-              "project_name": "Human readable name of the project",
-              "project_slug": "Directory/package name (no whitespaces)"
+              "folder_name": "ts-aws-lambda",
+              "package_name": "ts-aws-lambda",
+              "package_description": "Typescript aws lambda template"
             }
-          README: |
+          README: |-
             # Template for Typescript AWS Lambda template
-
+            
             This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Serverless application using [Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/) on Node.js 14 runtime using TypeScript for Lambda functions source code and shared layers for runtime dependencies.
 
             Resulted application will be the one you can find in this repository: [ts-aws-lambda-template](https://github.com/TendTo/ts-aws-lambda-template)
@@ -58,7 +62,7 @@ jobs:
             [Install AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) and run following command:
 
             ```sh
-            sam init --location gh:TendTo/ts-aws-lambda-template --checkout cookiecutter
+            sam init --location gh:TendTo/ts-aws-lambda-template
             ```
 
             You'll be prompted a few questions to help this template to scaffold this project and after its completion you should see a new folder at your current path with the name of the project you gave as input.
@@ -66,15 +70,10 @@ jobs:
             ## Credits
             Inspired by [cookiecutter-aws-sam-typescript-layers](https://github.com/Envek/cookiecutter-aws-sam-typescript-layers)
 
-
       - name: Git Commit and Push
-        uses: github-actions-x/commit@v2.8
-        with:
-          # Github Token with commit access
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # Override branch to push to
-          push-branch: cookiecutter
-          # Specify commit message
-          commit-message: 'update: cookiecutter'
-          # Force push.
-          force-push: true
+        run: |
+          git add -A
+          git commit -m "update: cookiecutter"
+          git push -f origin cookiecutter-action:cookiecutter
+          git remote add cookiecutter https://github.com/TendTo/ts-aws-lambda-template-cookiecutter.git
+          git push -f cookiecutter cookiecutter-action:cookiecutter

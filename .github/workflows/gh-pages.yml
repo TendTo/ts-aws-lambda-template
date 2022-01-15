@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: gh-pages updater
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [master]
+    paths: ["README.md"]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  gh-pages:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Git
+        run: |
+          git config --global user.name 'TendTo'
+          git config --global user.email 'TendTo@users.noreply.github.com'
+          git fetch origin
+          git checkout -b gh-pages-action origin/gh-pages
+
+      - name: Update the README.md
+        run: |
+          git checkout master README.md
+          sed -i 's/<img src=\"https:\/\/raw.githubusercontent.com\/simple-icons\/simple-icons\/develop\/icons\/typescript.svg#gh-light-mode-only\" alt=\"Typescript\" align=left width=35 height=35>//' README.md
+          sed -i 's/width=35 height=35/width=35 height=35 style="padding-right: 20px"/' README.md
+          mv README.md index.md
+
+      - name: Git Commit and Push
+        run: |
+          git add -A
+          git commit -m "update: gh-pages"
+          git push -f origin gh-pages-action:gh-pages
