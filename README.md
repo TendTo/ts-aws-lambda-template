@@ -9,7 +9,7 @@ AWS.
 
 To use this template in a brand new project run
 ```bash
-sam init --location gh:TendTo/ts-aws-lambda-template
+sam init --location gh:TendTo/ts-aws-lambda-template-cookiecutter
 ```
 
 ## 🗂 Project structure
