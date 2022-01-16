@@ -34,7 +34,11 @@ jobs:
           sed -i 's/Typescript aws lambda template/{{cookiecutter.package_description}}/' package.json
           sed -i '/is-odd/d' src/myLayer/package.json
           find . -type f -name 'package-lock.json' -delete
-          rm -rf .github .devcontainer template.yaml src/myFunction2 tests/myFunction2 src/myLayer/utility.ts
+          rm -rf .github .devcontainer
+          echo "$MY_FUNCTION2" > src/myFunction2/app.ts
+          echo "$TEST_MY_FUNCTION2" > tests/myFunction2/app.test.ts
+          echo "$UTILITY" > src/myLayer/utility.ts
+
           mkdir -p $FOLDER_NAME
           mv $(ls -I $FOLDER_NAME) $FOLDER_NAME
           mv $FOLDER_NAME/LICENCE .
@@ -78,16 +82,17 @@ jobs:
           POST_GEN: |
             import os
             import shutil
+            import re
 
             # {% if cookiecutter.add_layer == "yes" %}
-            
+
             REMOVE_PATHS = [
                 'src/myFunction',
                 'tests/myFunction',
             ]
 
             # {% elif cookiecutter.add_layer == "no" %}
-            
+
             REMOVE_PATHS = [
                 'src/myFunction2',
                 'tests/myFunction2',
@@ -112,6 +117,65 @@ jobs:
                 os.rename("tests/myFunction2", "tests/myFunction")
             # {% endif %}
 
+            template_path = "template.yaml"
+            sub_function = r'((?:\n\s+#.+)*?\n.+MyFunction2:(?:\s|.)*?!Ref MyFunctionApi\n\n?)'
+            sub_layer = r'((?:\n\s+#.+)*?\n.+MyLayer:(?:\s|.)*?BuildMethod: nodejs14.x\n\n?)'
+            sub_layers = r'((?:\n\s+#.+)*?\n.+Layers:(?:\s|.)*?!Ref[^\n]+)'
+            sub_output = r'(Outputs:(\n|.)*?)MyFunction2Api:(?:\n|.)*'
+
+            with open (template_path, 'r' ) as f:
+                content = f.read()
+                content_new = re.sub(sub_function, "", content, flags = re.M)
+                content_new = re.sub(sub_layer, r'\n{% if cookiecutter.add_layer  == "yes" %}\1{% endif %}\n', content_new, flags = re.M)
+                content_new = re.sub(sub_layers, r'\n{% if cookiecutter.add_layer  == "yes" %}\1 {% endif %}', content_new, flags = re.M)
+                content_new = re.sub(sub_output, r'\1', content_new, flags = re.M)
+            with open(template_path, 'w') as f:
+                f.write(content_new)
+          MY_FUNCTION2: |-
+            import { LambdaHandler } from "./types/lambda";
+
+            /**
+            * You can freely import any of the dependencies you add to the "myLayer" package.
+            */
+            // import * from 'is-odd';
+
+            /*
+            * To import some custom classes or functions from a layer,
+            * use the following syntax:
+            * import { MyFunction } from '/opt/nodejs/<path>';
+            * Make sure it is mapped correctly both in the tsconfig.json
+            * and in the jest.config.json files
+            */
+            import { MyUtilityClass } from "/opt/nodejs/utility";
+
+            export const handler: LambdaHandler = async (event) => {
+                return {
+                    statusCode: 200,
+                    body: JSON.stringify({
+                        message: `The class that returns always true has returned ${new MyUtilityClass().alwaysTrue}.`,
+                    }),
+                };
+            };
+          TEST_MY_FUNCTION2: |-
+            import { handler } from "../../src/myFunction/app";
+
+            describe('App module', function () {
+
+                test('successful response even', async () => {
+                    const result = await handler();
+                    expect(result.statusCode).toEqual(200);
+                    expect(result.body).toEqual(JSON.stringify({
+                        message: "The class that returns always true has returned true.",
+                    }));
+                });
+            });
+          UTILITY: |-
+            export class MyUtilityClass {
+                get alwaysTrue() {
+                    return true;
+                }
+            }
+
       - name: Git Commit and Push on branch
         run: |
           git add -A
@@ -123,3 +187,26 @@ jobs:
           git fetch --unshallow origin
           git remote add cookiecutter https://github.com/TendTo/ts-aws-lambda-template-cookiecutter.git
           git push -f cookiecutter cookiecutter-action:cookiecutter
+
+  test-cookiecutter:
+    needs: cookiecutter
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install cookiecutter
+
+    - name: Make sure the cookiecutter is installed correctly with layer
+      run: |
+        cookiecutter -f --no-input gh:TendTo/ts-aws-lambda-template-cookiecutter add_layer=yes
+        cookiecutter -f --no-input gh:TendTo/ts-aws-lambda-template-cookiecutter add_layer=no
