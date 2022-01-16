@@ -5,6 +5,13 @@ application that you can deploy with the SAM CLI.\
 It uses the Typescript language and targets the node 14.x runtime provided by
 AWS.
 
+## Usage
+
+To use this template in a brand new project run
+```bash
+sam init --location gh:TendTo/ts-aws-lambda-template
+```
+
 ## 🗂 Project structure
 
 ```yaml
