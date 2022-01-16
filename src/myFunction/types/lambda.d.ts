@@ -1,4 +1,4 @@
-import type { Handler, APIGatewayEvent, APIGatewayProxyResultV2 } from "aws-lambda";
+import type { APIGatewayEvent } from "aws-lambda";
 
 export type LambdaEvent = APIGatewayEvent;
 export type LambdaResult = { statusCode: number, body: string };

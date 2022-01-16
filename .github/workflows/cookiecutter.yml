@@ -30,13 +30,16 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Create the cookiecutter template
         run: |
-          sed -i 's/ts_aws_template/$PACKAGE_NAME/' package.json
-          sed -i 's/Typescript aws lambda template/$PACKAGE_DESCRIPTION/' package.json
+          sed -i 's/ts_aws_template/{{cookiecutter.package_name}}/' package.json
+          sed -i 's/Typescript aws lambda template/{{cookiecutter.package_description}}/' package.json
+          sed -i '/is-odd/d' src/myLayer/package.json
           find . -type f -name 'package-lock.json' -delete
-          rm -rf .github .devcontainer
-          mkdir -p $FOLDER_NAME 
+          rm -rf .github .devcontainer template.yaml src/myFunction2 tests/myFunction2 src/myLayer/utility.ts
+          mkdir -p $FOLDER_NAME
           mv $(ls -I $FOLDER_NAME) $FOLDER_NAME
           mv $FOLDER_NAME/LICENCE .
+          mkdir hooks
+          echo "$POST_GEN" > post_gen_project.py
           echo "$COOKIECUTTER_CONFIG" > cookiecutter.json
           echo "$README" > README.md
         env:
@@ -46,8 +49,12 @@ jobs:
           COOKIECUTTER_CONFIG: |-
             {
               "folder_name": "ts-aws-lambda",
-              "package_name": "ts-aws-lambda",
-              "package_description": "Typescript aws lambda template"
+              "package_name": "{{ cookiecutter.folder_name|lower|replace(' ', '-') }}",
+              "package_description": "Typescript aws lambda template",
+              "add_layer": [
+                "yes",
+                "no"
+              ]
             }
           README: |-
             # Template for Typescript AWS Lambda template
@@ -68,6 +75,42 @@ jobs:
 
             ## Credits
             Inspired by [cookiecutter-aws-sam-typescript-layers](https://github.com/Envek/cookiecutter-aws-sam-typescript-layers)
+          POST_GEN: |
+            import os
+            import shutil
+
+            # {% if cookiecutter.add_layer == "yes" %}
+            
+            REMOVE_PATHS = [
+                'src/myFunction',
+                'tests/myFunction',
+            ]
+
+            # {% elif cookiecutter.add_layer == "no" %}
+            
+            REMOVE_PATHS = [
+                'src/myFunction2',
+                'tests/myFunction2',
+                'src/myLayer',
+            ]
+
+            # {% endif %}
+
+            for path in REMOVE_PATHS:
+                path = path.strip()
+                if path and os.path.exists(path):
+                    if os.path.isdir(path):
+                        shutil.rmtree(path)
+                    else:
+                        os.unlink(path)
+
+            # {% if cookiecutter.add_layer == "yes" %}
+            if os.path.exists("src/myFunction2"):
+                os.rename("src/myFunction2", "src/myFunction")
+
+            if os.path.exists("tests/myFunction2"):
+                os.rename("tests/myFunction2", "tests/myFunction")
+            # {% endif %}
 
       - name: Git Commit and Push on branch
         run: |
