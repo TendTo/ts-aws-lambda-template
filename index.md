@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/assets/readme/typescript-white.svg#gh-dark-mode-only" alt="Typescript" align=left width=35 height=35 style="padding-right: 20px"> Typescript AWS Lambda template
+# <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/typescript.svg#gh-light-mode-only" alt="Typescript" align=left width=35 height=35><img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/assets/readme/typescript-white.svg#gh-dark-mode-only" alt="Typescript" align=left width=35 height=35> Typescript AWS Lambda template
 
 This project contains source code and supporting files for creating a serverless
 application that you can deploy with the SAM CLI.\
@@ -50,7 +50,7 @@ To use the SAM CLI, you need the following tools.
 - [npm 7.x](https://www.npmjs.com/)
 - [Docker](https://hub.docker.com/search/?type=edition&offering=community)
   (_optional_, for local testing or image deployement)
-- [AWS CLI](https://aws.amazon.com/cli/) (_optional_, for more options)
+- [AWS CLI](https://aws.amazon.com/cli/) (_optional_, for more control)
 
 > `NOTE:` npm needs to be version 7 or higher to support workspaces.\
 > You can check the current version with `npm -v`.\
@@ -376,3 +376,8 @@ sam logs -n HelloWorldFunction --stack-name ts-aws-lambda --tail
   - [DataGrip](https://docs.aws.amazon.com/toolkit-for-jetbrains/latest/userguide/welcome.html)
   - [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
   - [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
+
+## ❤️ Credit
+
+Inspired by
+[aws-sam-typescript-layers-example](https://github.com/Envek/aws-sam-typescript-layers-example/)
