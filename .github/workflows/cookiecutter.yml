@@ -6,11 +6,10 @@ name: Cookiecutter updater
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [master]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
   cookiecutter:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -52,7 +51,7 @@ jobs:
             }
           README: |-
             # Template for Typescript AWS Lambda template
-            
+
             This is a [Cookiecutter](https://github.com/audreyr/cookiecutter) template to create a Serverless application using [Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/) on Node.js 14 runtime using TypeScript for Lambda functions source code and shared layers for runtime dependencies.
 
             Resulted application will be the one you can find in this repository: [ts-aws-lambda-template](https://github.com/TendTo/ts-aws-lambda-template)
@@ -70,10 +69,14 @@ jobs:
             ## Credits
             Inspired by [cookiecutter-aws-sam-typescript-layers](https://github.com/Envek/cookiecutter-aws-sam-typescript-layers)
 
-      - name: Git Commit and Push
+      - name: Git Commit and Push on branch
         run: |
           git add -A
           git commit -m "update: cookiecutter"
           git push -f origin cookiecutter-action:cookiecutter
+
+      - name: Git Commit and Push on cookiecutter repo
+        run: |
+          git fetch --unshallow origin
           git remote add cookiecutter https://github.com/TendTo/ts-aws-lambda-template-cookiecutter.git
           git push -f cookiecutter cookiecutter-action:cookiecutter
