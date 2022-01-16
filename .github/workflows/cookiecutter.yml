@@ -39,7 +39,7 @@ jobs:
           mv $(ls -I $FOLDER_NAME) $FOLDER_NAME
           mv $FOLDER_NAME/LICENCE .
           mkdir hooks
-          echo "$POST_GEN" > post_gen_project.py
+          echo "$POST_GEN" > hooks/post_gen_project.py
           echo "$COOKIECUTTER_CONFIG" > cookiecutter.json
           echo "$README" > README.md
         env:
