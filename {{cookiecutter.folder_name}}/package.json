@@ -1,7 +1,7 @@
 {
-  "name": "ts_aws_template",
+  "name": "{{cookiecutter.package_name}}",
   "version": "1.0.0",
-  "description": "Typescript aws lambda template",
+  "description": "{{cookiecutter.package_description}}",
   "repository": "https://github.com/TendTo/ts-aws-lambda-template",
   "author": "TendTo",
   "license": "MIT",

@@ -1,0 +1,9 @@
+{
+  "folder_name": "ts-aws-lambda",
+  "package_name": "{{ cookiecutter.folder_name|lower|replace(' ', '-') }}",
+  "package_description": "Typescript aws lambda template",
+  "add_layer": [
+    "yes",
+    "no"
+  ]
+}
