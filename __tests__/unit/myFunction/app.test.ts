@@ -1,4 +1,4 @@
-import { handler } from "../../src/myFunction/app";
+import { handler } from "../../../src/myFunction/app";
 
 describe('App module', function () {
 

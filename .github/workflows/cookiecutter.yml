@@ -36,7 +36,7 @@ jobs:
           find . -type f -name 'package-lock.json' -delete
           rm -rf .github .devcontainer
           echo "$MY_FUNCTION2" > src/myFunction2/app.ts
-          echo "$TEST_MY_FUNCTION2" > tests/myFunction2/app.test.ts
+          echo "$TEST_MY_FUNCTION2" > __tests__/unit/myFunction2/app.test.ts
           echo "$UTILITY" > src/myLayer/utility.ts
 
           mkdir -p $FOLDER_NAME
@@ -88,14 +88,14 @@ jobs:
 
             REMOVE_PATHS = [
                 'src/myFunction',
-                'tests/myFunction',
+                '__tests__/unit/myFunction',
             ]
 
             # {% elif cookiecutter.add_layer == "no" %}
 
             REMOVE_PATHS = [
                 'src/myFunction2',
-                'tests/myFunction2',
+                '__tests__/unit/myFunction2',
                 'src/myLayer',
             ]
 
@@ -113,8 +113,8 @@ jobs:
             if os.path.exists("src/myFunction2"):
                 os.rename("src/myFunction2", "src/myFunction")
 
-            if os.path.exists("tests/myFunction2"):
-                os.rename("tests/myFunction2", "tests/myFunction")
+            if os.path.exists("__tests__/unit/myFunction2"):
+                os.rename("__tests__/unit/myFunction2", "__tests__/unit/myFunction")
             # {% endif %}
 
             template_path = "template.yaml"

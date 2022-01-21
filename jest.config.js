@@ -4,10 +4,10 @@ module.exports = {
   testEnvironment: 'node',
   coverageDirectory: 'coverage',
   collectCoverage: false,
-  roots: ['./tests'],
   clearMocks: true,
-  setupFiles: ['./tests/setupTests.ts'],
-  moduleNameMapper : {
+  testMatch: ["**/__tests__/**/?(*.)+(spec|test).[jt]s?(x)"],
+  setupFiles: ['./__tests__/setupTests.ts'],
+  moduleNameMapper: {
     "^/opt/nodejs/(.*)$": "<rootDir>/src/myLayer/$1",
   }
 };

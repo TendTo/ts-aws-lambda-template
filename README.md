@@ -16,11 +16,11 @@ sam init --location gh:TendTo/ts-aws-lambda-template-cookiecutter
 
 ```yaml
 .
+├── __tests__            # unit tests to run with jest
 ├── .devcontainer        # used by VsCode to launch a devcontainer with SAM and node installed
 ├── dist                 # folder that stores the compiled typescript. Created by tsc compilation
 ├── events               # json events used with 'sam local invoke' or for testing
 ├── src                  # code that will be deployed to AWS Lambda
-├── tests                # unit tests to run with jest
 ├── .gitignore           # .gitignore file
 ├── env.json.dist        # example env file that defines the env variables for 'sam local invoke'
 ├── jest.config.js       # jest configuration file
