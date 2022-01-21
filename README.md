@@ -8,9 +8,14 @@ AWS.
 ## Usage
 
 To use this template in a brand new project run
+
 ```bash
 sam init --location gh:TendTo/ts-aws-lambda-template-cookiecutter
 ```
+
+During the configuration, you can choose whether to let the template add a
+lambda layer for you.\
+It can always be added later.
 
 ## 🗂 Project structure
 
